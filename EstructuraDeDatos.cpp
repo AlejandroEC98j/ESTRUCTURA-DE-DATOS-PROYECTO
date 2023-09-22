@@ -1,25 +1,36 @@
+//PROYECTO-ESTRUCTURA DE DATOS
+//Desarrollo de un sistema de gestion de tareas y proyectos para alumnos
+//INTEGRANTES
+//Espiritu Campos Alejandro
+//Javier Curi Dayana Jessica
+//Ricaldi Solis Maylon Amilcar
 #include <iostream>
 #include <string>
 #include <cstring>
 using namespace std;
+
 // Estructura para representar una tarea
 struct Tarea {
-    char nombre[100];
-    char descripcion[200];
+    char* nombre;
+    char* descripcion;
     bool completada;
 };
+
 // Estructura para representar un proyecto
 struct Proyecto {
-    char nombre[100];
-    char descripcion[200];
+    char* nombre;
+    char* descripcion;
     Tarea* tareas[10];
     int numTareas;
 };
+
 // Función para agregar una tarea a un proyecto
 void agregarTarea(Proyecto& proyecto, const char* nombre, const char* descripcion) {
     if (proyecto.numTareas < 10) {
         Tarea* nuevaTarea = new Tarea;
+        nuevaTarea->nombre = new char[strlen(nombre) + 1];
         strcpy(nuevaTarea->nombre, nombre);
+        nuevaTarea->descripcion = new char[strlen(descripcion) + 1];
         strcpy(nuevaTarea->descripcion, descripcion);
         nuevaTarea->completada = false;
         proyecto.tareas[proyecto.numTareas] = nuevaTarea;
@@ -64,10 +75,17 @@ void cambiarEstadoTarea(Proyecto& proyecto) {
 
 int main() {
     Proyecto miProyecto;
+
+    // Solicitar y asignar memoria para el nombre del proyecto
+    miProyecto.nombre = new char[100];
     cout << "Ingrese el nombre del proyecto: ";
-    cin.getline(miProyecto.nombre, sizeof(miProyecto.nombre));
+    cin.getline(miProyecto.nombre, 100);
+
+    // Solicitar y asignar memoria para la descripción del proyecto
+    miProyecto.descripcion = new char[200];
     cout << "Ingrese la descripción del proyecto: ";
-    cin.getline(miProyecto.descripcion, sizeof(miProyecto.descripcion));
+    cin.getline(miProyecto.descripcion, 200);
+
     miProyecto.numTareas = 0;
     int numTareas;
     cout << "Ingrese la cantidad de tareas a agregar: ";
@@ -98,7 +116,14 @@ int main() {
 
     // Liberar la memoria de las tareas en el heap
     for (int i = 0; i < miProyecto.numTareas; i++) {
+        delete[] miProyecto.tareas[i]->nombre;
+        delete[] miProyecto.tareas[i]->descripcion;
         delete miProyecto.tareas[i];
     }
+
+    // Liberar la memoria para el nombre y la descripción del proyecto
+    delete[] miProyecto.nombre;
+    delete[] miProyecto.descripcion;
+
     return 0;
 }
